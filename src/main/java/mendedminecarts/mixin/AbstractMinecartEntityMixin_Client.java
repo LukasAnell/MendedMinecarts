@@ -26,16 +26,7 @@ public abstract class AbstractMinecartEntityMixin_Client extends Entity implemen
 		super(type, world);
 	}
 
-	@Redirect(
-			method = "tick",
-			at = @At(value = "FIELD", target = "Lnet/minecraft/world/World;isClient:Z"))
-	private boolean simulateCartsOnClientLikeOnServer(World instance) {
-		if (instance.isClient) {
-			//false => do simulation
-			return !MendedMinecartsMod.ACCURATE_CLIENT_MINECARTS.isEnabled();
-		}
-		return false;
-	}
+	// AccurateClientMinecarts / NoClientCartInterpolation not ported to 1.21.10 yet
 
 //	@Inject(
 //			method = "setVelocityClient",
@@ -44,19 +35,6 @@ public abstract class AbstractMinecartEntityMixin_Client extends Entity implemen
 //	private void rememberCartVelocity(double x, double y, double z, CallbackInfo ci) {
 //		this.displayData = MinecartDisplayData.withVelocity(this, new Vec3d(x,y,z));
 //	}
-
-	@Inject(
-			method = "updateTrackedPositionAndAngles(DDDFFI)V",
-			at = @At("HEAD"),
-			cancellable = true
-	)
-	private void setCartPosLikeOtherEntities(double x, double y, double z, float yaw, float pitch, int interpolationSteps, CallbackInfo ci) {
-		if (this.getEntityWorld().isClient() && (MendedMinecartsMod.ACCURATE_CLIENT_MINECARTS.isEnabled() || MendedMinecartsMod.NO_CLIENT_CART_INTERPOLATION.isEnabled())) {
-			ci.cancel();
-			super.updateTrackedPositionAndAngles(x, y, z, yaw, pitch, interpolationSteps);
-		}
-//		this.displayData = MinecartDisplayData.withPos(this, new Vec3d(x, y, z));
-	}
 
 	@Override
 	public void updateDisplayInfo() {
