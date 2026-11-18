@@ -1,5 +1,6 @@
 package mendedminecarts.mixin;
 
+import mendedminecarts.AbstractMinecartEntityAccess_Physics;
 import mendedminecarts.MendedMinecartsMod;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -25,28 +26,44 @@ public abstract class TntMinecartEntityMixin extends Entity {
     }
 
     @Inject(
-            method = "tick",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/entity/vehicle/TntMinecartEntity;explode(Lnet/minecraft/entity/damage/DamageSource;D)V",
-                    shift = At.Shift.BEFORE
-            )
+        method = "tick",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/vehicle/TntMinecartEntity;explode(Lnet/minecraft/entity/damage/DamageSource;D)V",
+            shift = At.Shift.BEFORE,
+            ordinal = 1
+        ),
+        cancellable = true
     )
     private void setFuseFixBlowupRail(CallbackInfo ci) {
+        if (
+            (
+                (AbstractMinecartEntityAccess_Physics) this
+            ).getLastPostCollisionTick() == this.getEntityWorld().getTime()
+        ) {
+            ci.cancel();
+            return;
+        }
+
         if (MendedMinecartsMod.EXPLODING_CART_FIX.isEnabled()) {
             this.fuseTicks = 0;
         }
     }
 
     @Inject(
-            method = "damage",
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/entity/vehicle/TntMinecartEntity;explode(Lnet/minecraft/entity/damage/DamageSource;D)V",
-                    shift = At.Shift.BEFORE
-            )
+        method = "damage",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/entity/vehicle/TntMinecartEntity;explode(Lnet/minecraft/entity/damage/DamageSource;D)V",
+            shift = At.Shift.BEFORE
+        )
     )
-    private void setFuseFixBlowupRail1(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void setFuseFixBlowupRail1(
+        ServerWorld world,
+        DamageSource source,
+        float amount,
+        CallbackInfoReturnable<Boolean> cir
+    ) {
         if (MendedMinecartsMod.EXPLODING_CART_FIX.isEnabled()) {
             this.fuseTicks = 0;
         }
