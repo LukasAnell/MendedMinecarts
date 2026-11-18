@@ -51,7 +51,7 @@ public abstract class AbstractMinecartEntityMixin_Client extends Entity implemen
 			cancellable = true
 	)
 	private void setCartPosLikeOtherEntities(double x, double y, double z, float yaw, float pitch, int interpolationSteps, CallbackInfo ci) {
-		if (this.getWorld().isClient && (MendedMinecartsMod.ACCURATE_CLIENT_MINECARTS.isEnabled() || MendedMinecartsMod.NO_CLIENT_CART_INTERPOLATION.isEnabled())) {
+		if (this.getEntityWorld().isClient() && (MendedMinecartsMod.ACCURATE_CLIENT_MINECARTS.isEnabled() || MendedMinecartsMod.NO_CLIENT_CART_INTERPOLATION.isEnabled())) {
 			ci.cancel();
 			super.updateTrackedPositionAndAngles(x, y, z, yaw, pitch, interpolationSteps);
 		}
@@ -60,13 +60,13 @@ public abstract class AbstractMinecartEntityMixin_Client extends Entity implemen
 
 	@Override
 	public void updateDisplayInfo() {
-		if (!this.getWorld().isClient()) {
+		if (!this.getEntityWorld().isClient()) {
 			return;
 		}
 		if ((MendedMinecartsMod.DISPLAY_CART_DATA.isEnabled() || MendedMinecartsMod.VISUAL_HOPPER_CART_LOCKING.isEnabled()) &&
 				MinecraftClient.getInstance().player != null &&
 				MinecraftClient.getInstance().player.hasPermissionLevel(2) &&
-				MinecraftClient.getInstance().player.getPos().squaredDistanceTo(this.getPos()) < MendedMinecartsMod.DATA_RENDER_DISTANCE_SQ) {
+				MinecraftClient.getInstance().player.getEntityPos().squaredDistanceTo(this.getEntityPos()) < MendedMinecartsMod.DATA_RENDER_DISTANCE_SQ) {
 			MinecraftClient.getInstance().player.networkHandler.getDataQueryHandler().queryEntityNbt(this.getId(), nbt -> {
 				try {
 					this.displayData = MinecartDisplayData.fromNBT(this, nbt);

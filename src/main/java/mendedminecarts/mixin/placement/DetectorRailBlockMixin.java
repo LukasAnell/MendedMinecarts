@@ -29,7 +29,7 @@ public abstract class DetectorRailBlockMixin extends AbstractRailBlock {
         BlockPos noUpdatePos = NO_CONNECT_POS.get();
         if (pos.equals(noUpdatePos)) {
             ci.cancel();
-            world.updateNeighbor(state, pos, this, pos, notify);
+            world.updateNeighbor(state, pos, this, null, notify);
             this.updatePoweredStatus(world, pos, state);
         }
 

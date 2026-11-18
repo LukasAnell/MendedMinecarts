@@ -59,7 +59,7 @@ public abstract class AbstractMinecartEntityMixin_DerailFix extends Entity imple
         if (!hasHitWall) {
             return;
         }
-        BlockState blockState = this.getWorld().getBlockState(this.getBlockPos());
+        BlockState blockState = this.getEntityWorld().getBlockState(this.getBlockPos());
         if (blockState.isOf(Blocks.RAIL)) {
             this.setVelocity(velocity);
         }

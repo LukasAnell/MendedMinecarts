@@ -7,6 +7,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -39,8 +40,8 @@ public class LavaCauldronBlockMixin_TNTCartDamage {
             return;
         }
         tntCart.setOnFireFor(15);
-        if (tntCart.damage(tntCart.getDamageSources().cactus(), 4.0f)) {
-            tntCart.playSound(SoundEvents.ENTITY_GENERIC_BURN, 0.4f, 2.0f + tntCart.getWorld().random.nextFloat() * 0.4f);
+        if (tntCart.getEntityWorld() instanceof ServerWorld serverWorld && tntCart.damage(serverWorld, tntCart.getDamageSources().cactus(), 4.0f)) {
+            tntCart.playSound(SoundEvents.ENTITY_GENERIC_BURN, 0.4f, 2.0f + tntCart.getEntityWorld().random.nextFloat() * 0.4f);
         }
     }
 }

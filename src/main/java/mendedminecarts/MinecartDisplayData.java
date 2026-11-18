@@ -30,19 +30,19 @@ public record MinecartDisplayData(Vec3d pos, Box boundingBox, Vec3d velocity, bo
                                   AbstractMinecartEntity entity) {
 
     public static MinecartDisplayData fromNBT(AbstractMinecartEntityAccess entity, NbtCompound nbt) {
-        NbtList nbtPos = nbt.getList("Pos", 6);
-        NbtList nbtVelocity = nbt.getList("Motion", 6);
-        double d = nbtVelocity.getDouble(0);
-        double e = nbtVelocity.getDouble(1);
-        double f = nbtVelocity.getDouble(2);
+        NbtList nbtPos = nbt.getListOrEmpty("Pos");
+        NbtList nbtVelocity = nbt.getListOrEmpty("Motion");
+        double d = nbtVelocity.getDouble(0, 0.0);
+        double e = nbtVelocity.getDouble(1, 0.0);
+        double f = nbtVelocity.getDouble(2, 0.0);
         Vec3d velocity = new Vec3d(d, e, f);
-        Vec3d pos = new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2));
+        Vec3d pos = new Vec3d(nbtPos.getDouble(0, 0.0), nbtPos.getDouble(1, 0.0), nbtPos.getDouble(2, 0.0));
 
-        boolean onGround = nbt.getBoolean("OnGround");
+        boolean onGround = nbt.getBoolean("OnGround", false);
 
         int fillLevel = entity instanceof StorageMinecartEntity inventory ? getComparatorOutput(inventory, nbt) : -1;
 
-        boolean hopperLocked = entity instanceof HopperMinecartEntity && !(nbt.contains("Enabled") && nbt.getBoolean("Enabled"));
+        boolean hopperLocked = entity instanceof HopperMinecartEntity && !nbt.getBoolean("Enabled", false);
         float wobble = ((AbstractMinecartEntity) entity).getDamageWobbleStrength();
 
         double slowdown = getSlowdown((Entity) entity, nbt, fillLevel);
@@ -52,8 +52,10 @@ public record MinecartDisplayData(Vec3d pos, Box boundingBox, Vec3d velocity, bo
         Box boxAt = ((Entity) entity).getType().getDimensions().getBoxAt(pos.x, pos.y, pos.z);
 
         int fuseTime = Integer.MIN_VALUE;
-        if (nbt.contains("TNTFuse", NbtElement.NUMBER_TYPE)) {
-            fuseTime = nbt.getInt("TNTFuse");
+        // keep old name as a fallback
+        Optional<Integer> fuse = nbt.getInt("fuse").or(() -> nbt.getInt("TNTFuse"));
+        if (fuse.isPresent()) {
+            fuseTime = fuse.get();
         }
 
         return new MinecartDisplayData(pos, boxAt, velocity, onGround, fillLevel, slowdown, estimatedDistance, hopperLocked, wobble, rideable, fuseTime, (AbstractMinecartEntity) entity);
@@ -287,8 +289,8 @@ public record MinecartDisplayData(Vec3d pos, Box boundingBox, Vec3d velocity, bo
         if (!(this.entity() instanceof HopperMinecartEntity hopper)) {
             return new Box[0];
         }
-        VoxelShape inputAreaShape = hopper.getInputAreaShape();
-        return inputAreaShape.getBoundingBoxes().stream().map(box -> box.offset(this.pos.x - 0.5, this.pos.y + 0.5 - 0.5, this.pos.z - 0.5)).toArray();
+        Box inputArea = hopper.getInputAreaShape();
+        return new Object[]{inputArea.offset(this.pos.x - 0.5, this.pos.y + 0.5 - 0.5, this.pos.z - 0.5)};
     }
 
     public Box hopperPickupArea2() {
