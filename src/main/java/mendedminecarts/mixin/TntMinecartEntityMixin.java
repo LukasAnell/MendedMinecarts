@@ -5,6 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -27,7 +28,7 @@ public abstract class TntMinecartEntityMixin extends Entity {
             method = "tick",
             at = @At(
                     value = "INVOKE",
-                    target = "Lnet/minecraft/entity/vehicle/TntMinecartEntity;explode(D)V",
+                    target = "Lnet/minecraft/entity/vehicle/TntMinecartEntity;explode(Lnet/minecraft/entity/damage/DamageSource;D)V",
                     shift = At.Shift.BEFORE
             )
     )
@@ -45,7 +46,7 @@ public abstract class TntMinecartEntityMixin extends Entity {
                     shift = At.Shift.BEFORE
             )
     )
-    private void setFuseFixBlowupRail1(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+    private void setFuseFixBlowupRail1(ServerWorld world, DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (MendedMinecartsMod.EXPLODING_CART_FIX.isEnabled()) {
             this.fuseTicks = 0;
         }

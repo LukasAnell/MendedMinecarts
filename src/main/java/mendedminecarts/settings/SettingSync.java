@@ -1,16 +1,34 @@
 package mendedminecarts.settings;
 
 import mendedminecarts.MendedMinecartsMod;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.s2c.common.CustomPayloadS2CPacket;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 
 public class SettingSync {
-    public static final Identifier CHANNEL = new Identifier("mendedminecarts:settings");
+    public static final Identifier CHANNEL = Identifier.of("mendedminecarts", "settings");
+    public static final CustomPayload.Id<MendedMinecartsSettingPayload> ID = new CustomPayload.Id<>(CHANNEL);
+    public static final PacketCodec<RegistryByteBuf, MendedMinecartsSettingPayload> CODEC =
+            PacketCodec.of(MendedMinecartsSettingPayload::write, MendedMinecartsSettingPayload::new);
     public static PlayerManager PLAYER_MANAGER = null;
+
+    /** Registers the payload type. Must run on both client and server (called from the mod initializer). */
+    public static void registerPayload() {
+        PayloadTypeRegistry.playS2C().register(ID, CODEC);
+    }
+
+    private static void send(ServerPlayerEntity player, MendedMinecartsSettingPayload payload) {
+        // players without the mod can't receive it
+        if (ServerPlayNetworking.canSend(player, ID)) {
+            ServerPlayNetworking.send(player, payload);
+        }
+    }
 
     public static void handleData(MendedMinecartsSettingPayload payload) {
         try {
@@ -37,7 +55,6 @@ public class SettingSync {
             return MendedMinecartsMod.FLAT_SETTINGS.get(buf.readInt());
         }
 
-        @Override
         public void write(PacketByteBuf buf) {
             buf.writeInt(MendedMinecartsMod.SETTING_VERSION);
             buf.writeInt(MendedMinecartsMod.FLAT_SETTINGS.indexOf(setting));
@@ -45,8 +62,8 @@ public class SettingSync {
         }
 
         @Override
-        public Identifier id() {
-            return CHANNEL;
+        public Id<? extends CustomPayload> getId() {
+            return ID;
         }
     }
 
@@ -57,7 +74,7 @@ public class SettingSync {
     public static void updateAllToPlayer(ServerPlayerEntity player) {
         for (Setting setting : MendedMinecartsMod.FLAT_SETTINGS) {
             MendedMinecartsSettingPayload payload = makeSettingPacket(setting);
-            player.networkHandler.sendPacket(new CustomPayloadS2CPacket(payload));
+            send(player, payload);
         }
     }
 
@@ -67,6 +84,8 @@ public class SettingSync {
             return;
         }
         MendedMinecartsSettingPayload payload = makeSettingPacket(setting);
-        playerManager.sendToAll(new CustomPayloadS2CPacket(payload));
+        for (ServerPlayerEntity player : playerManager.getPlayerList()) {
+            send(player, payload);
+        }
     }
 }

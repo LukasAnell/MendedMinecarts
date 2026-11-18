@@ -18,6 +18,9 @@
   "entrypoints": {
     "main": [
       "mendedminecarts.MendedMinecartsMod"
+    ],
+    "client": [
+      "mendedminecarts.MendedMinecartsClient"
     ]
   },
   "mixins": [
@@ -25,6 +28,8 @@
   ],
 
   "depends": {
-    "fabricloader": "*"
+    "fabricloader": ">=0.18.4",
+    "minecraft": "~1.21.10",
+    "java": ">=21"
   }
 }

@@ -8,6 +8,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.ReadView;
+import net.minecraft.util.ErrorReporter;
 import net.minecraft.text.Text;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
@@ -63,7 +66,8 @@ public record MinecartDisplayData(Vec3d pos, Box boundingBox, Vec3d velocity, bo
 
     private static int getComparatorOutput(StorageMinecartEntity inventory, NbtCompound nbtCompound) {
         DefaultedList<ItemStack> itemStacks = DefaultedList.ofSize(inventory.size(), ItemStack.EMPTY);
-        Inventories.readNbt(nbtCompound, itemStacks);
+        ReadView view = NbtReadView.create(ErrorReporter.EMPTY, inventory.getEntityWorld().getRegistryManager(), nbtCompound);
+        Inventories.readData(view, itemStacks);
         int stacks = 0;
         float weight = 0.0f;
         for (ItemStack itemStack : itemStacks) {

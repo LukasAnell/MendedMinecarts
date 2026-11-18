@@ -4,9 +4,8 @@ import mendedminecarts.CartHelper;
 import mendedminecarts.MendedMinecartsMod;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.DefaultMinecartController;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.entity.vehicle.MinecartController;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -15,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * After the server tick has computed the cart's yaw and pitch, snap them to the rail axis.
  */
 @Mixin(DefaultMinecartController.class)
-public abstract class DefaultMinecartControllerMixin_YawFix {
+public abstract class DefaultMinecartControllerMixin_YawFix extends MinecartController {
 
-    @Shadow
-    @Final
-    protected AbstractMinecartEntity minecart;
+    protected DefaultMinecartControllerMixin_YawFix(AbstractMinecartEntity minecart) {
+        super(minecart);
+    }
 
     @Inject(
         method = "tick",

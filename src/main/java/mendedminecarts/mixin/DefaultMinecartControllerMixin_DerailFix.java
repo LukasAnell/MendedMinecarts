@@ -6,13 +6,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.DefaultMinecartController;
+import net.minecraft.entity.vehicle.MinecartController;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -21,11 +20,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  * Mark when the cart is moving itself on a rail and restore the velocity lost when hitting a wall.
  */
 @Mixin(DefaultMinecartController.class)
-public abstract class DefaultMinecartControllerMixin_DerailFix {
+public abstract class DefaultMinecartControllerMixin_DerailFix extends MinecartController {
 
-    @Shadow
-    @Final
-    protected AbstractMinecartEntity minecart;
+    protected DefaultMinecartControllerMixin_DerailFix(AbstractMinecartEntity minecart) {
+        super(minecart);
+    }
 
     @Inject(method = "moveOnRail", at = @At("HEAD"))
     private void moveUpdateCachedOnRail0(ServerWorld world, CallbackInfo ci) {
