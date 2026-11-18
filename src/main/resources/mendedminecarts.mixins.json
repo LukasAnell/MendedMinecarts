@@ -6,7 +6,6 @@
   "mixins": [
     "AbstractBlockSettingAccessor",
     "AbstractMinecartEntityMixin_DerailFix",
-    "AbstractMinecartEntityMixin_YawFix",
     "AbstractRailBlockMixin",
     "AbstractRailBlockMixin_DynamicBounds",
     "CommandManagerMixin",

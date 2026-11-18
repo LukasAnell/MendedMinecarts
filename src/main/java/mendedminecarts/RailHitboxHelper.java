@@ -12,6 +12,7 @@ import net.minecraft.util.Util;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 
@@ -94,7 +95,7 @@ public class RailHitboxHelper {
                             Axis axis = direction.getAxis();
                             AxisDirection axisDirection = direction.getDirection();
                             double distanceToHitbox = axisDirection == AxisDirection.NEGATIVE ? offsetCartBox.getMin(axis) - (wallShape.getMax(axis)) : wallShape.getMin(axis) - offsetCartBox.getMax(axis);
-                            if (distanceToHitbox > 0) {
+                            if (distanceToHitbox > 0 && !isGrazedAndMovingAway(offsetCartBox, wallShape, axis, cart.getVelocity())) {
                                 selectedWalls.add(wallShape);
                             }
                         }
@@ -111,6 +112,22 @@ public class RailHitboxHelper {
         return railCollisionShape;
     }
 
+    private static boolean isGrazedAndMovingAway(Box offsetCartBox, VoxelShape wallShape, Axis wallAxis, Vec3d velocity) {
+        Axis otherAxis = wallAxis == Axis.X ? Axis.Z : Axis.X;
+        double cartMin = offsetCartBox.getMin(otherAxis);
+        double cartMax = offsetCartBox.getMax(otherAxis);
+        double wallMin = wallShape.getMin(otherAxis);
+        double wallMax = wallShape.getMax(otherAxis);
+        double overlap = Math.min(cartMax, wallMax) - Math.max(cartMin, wallMin);
+
+        if (overlap <= 0 || overlap >= (wallMax - wallMin) - 1.0E-6) {
+            return false;
+        }
+
+        double velocityOnOtherAxis = otherAxis == Axis.X ? velocity.x : velocity.z;
+
+        return cartMin > wallMin ? velocityOnOtherAxis > 0 : velocityOnOtherAxis < 0;
+    }
 
     public static boolean isCurvedShape(RailShape railShape) {
         return railShape == RailShape.NORTH_EAST || railShape == RailShape.NORTH_WEST || railShape == RailShape.SOUTH_EAST || railShape == RailShape.SOUTH_WEST;
