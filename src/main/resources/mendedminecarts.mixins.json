@@ -1,37 +1,38 @@
 {
-  "required": true,
-  "minVersion": "0.8",
-  "package": "mendedminecarts.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "mixins": [
-    "AbstractBlockSettingAccessor",
-    "AbstractMinecartEntityMixin_DerailFix",
-    "AbstractRailBlockMixin",
-    "AbstractRailBlockMixin_DynamicBounds",
-    "CommandManagerMixin",
-    "DefaultMinecartControllerMixin_ConfiguredSpeed",
-    "DefaultMinecartControllerMixin_DerailFix",
-    "DefaultMinecartControllerMixin_YawFix",
-    "EntityShapeContextAccessor",
-    "EntityTrackerEntryMixin",
-    "HopperMinecartEntityMixin",
-    "LavaCauldronBlockMixin_TNTCartDamage",
-    "StorageMinecartEntityMixin_ItemCap",
-    "TntMinecartEntityMixin",
-    "placement.AbstractRailBlockMixin",
-    "placement.DetectorRailBlockMixin",
-    "settings.PlayerManagerMixin"
-  ],
-  "client": [
-    "AbstractMinecartEntityMixin_Client",
-    "AbstractMinecartEntityRendererMixin",
-    "ClientWorldMixin",
-    "DataQueryHandlerMixin",
-    "DebugRendererMixin_Client",
-    "MinecartEntityRenderStateMixin",
-    "PositionInterpolatorMixin_NoCartInterpolation"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "required": true,
+    "minVersion": "0.8",
+    "package": "mendedminecarts.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "mixins": [
+        "AbstractBlockSettingAccessor",
+        "AbstractMinecartEntityMixin_DerailFix",
+        "AbstractRailBlockMixin",
+        "AbstractRailBlockMixin_DynamicBounds",
+        "CommandManagerMixin",
+        "DefaultMinecartControllerMixin_ConfiguredSpeed",
+        "DefaultMinecartControllerMixin_DerailFix",
+        "DefaultMinecartControllerMixin_YawFix",
+        "EntityShapeContextAccessor",
+        "EntityTrackerEntryMixin",
+        "HopperMinecartEntityMixin",
+        "ItemStackMixin_ItemCap",
+        "LavaCauldronBlockMixin_TNTCartDamage",
+        "StorageMinecartEntityMixin_ItemCap",
+        "TntMinecartEntityMixin",
+        "placement.AbstractRailBlockMixin",
+        "placement.DetectorRailBlockMixin",
+        "settings.PlayerManagerMixin"
+    ],
+    "client": [
+        "AbstractMinecartEntityMixin_Client",
+        "AbstractMinecartEntityRendererMixin",
+        "ClientWorldMixin",
+        "DataQueryHandlerMixin",
+        "DebugRendererMixin_Client",
+        "MinecartEntityRenderStateMixin",
+        "PositionInterpolatorMixin_NoCartInterpolation"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
 }
