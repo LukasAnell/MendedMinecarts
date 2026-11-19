@@ -7,20 +7,17 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(StorageMinecartEntity.class)
-public abstract class StorageMinecartEntityMixin_ItemCap implements VehicleInventory {
+public abstract class StorageMinecartEntityMixin_ItemCap
+    implements VehicleInventory
+{
 
     @Override
     public void setInventoryStack(int slot, ItemStack stack) {
-        if (MendedMinecartsMod.NO_CART_ITEM_CAP.isEnabled()) {
-            this.generateInventoryLoot(null);
-            this.getInventory().set(slot, stack);
-        } else {
-            //Copypaste from VehicleInventory
-            this.generateInventoryLoot(null);
-            this.getInventory().set(slot, stack);
-            if (!stack.isEmpty() && stack.getCount() > this.getMaxCountPerStack()) {
-                stack.setCount(this.getMaxCountPerStack());
-            }
+        this.generateInventoryLoot(null);
+        this.getInventory().set(slot, stack);
+
+        if (!MendedMinecartsMod.NO_CART_ITEM_CAP.isEnabled()) {
+            stack.capCount(this.getMaxCount(stack));
         }
     }
 }
