@@ -28,7 +28,8 @@
     "ClientWorldMixin",
     "DataQueryHandlerMixin",
     "DebugRendererMixin_Client",
-    "MinecartEntityRenderStateMixin"
+    "MinecartEntityRenderStateMixin",
+    "PositionInterpolatorMixin_NoCartInterpolation"
   ],
   "injectors": {
     "defaultRequire": 1
